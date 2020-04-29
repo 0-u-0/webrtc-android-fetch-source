@@ -5,10 +5,13 @@ import logging
 import sys
 import shutil
 
+from build_tools import Build
+
 SDK_PATH = '/sdk/android'
 JAVA_COPY_PATH = '/java'
 JAVA_COLLECT_PATH = ['/api', '/src/java']
 OUT_PATH = '/out'
+ARCHS = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
 
 
 def _RemoveFiles(folder):
@@ -67,7 +70,8 @@ def _CollectLibraries(source_dir):
 
 
 def _BuildLibraries(source_dir, is_debug):
-    pass
+    build_dir = source_dir + OUT_PATH
+    # Build(build_dir, 'x86', is_debug, False)
 
 
 def main():

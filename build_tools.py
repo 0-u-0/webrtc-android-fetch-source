@@ -18,7 +18,7 @@ def IsRealDepotTools(path):
     return os.path.isfile(os.path.join(expanded_path, 'gclient.py'))
 
 
-def add_depot_tools_to_path(source_dir):
+def add_depot_tools_to_path(source_dir=''):
     """Search for depot_tools and add it to sys.path."""
     # First, check if we have a DEPS'd in "depot_tools".
     deps_depot_tools = os.path.join(source_dir, 'third_party', 'depot_tools')

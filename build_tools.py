@@ -6,9 +6,7 @@ import subprocess
 import sys
 
 DEFAULT_ARCHS = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
-NEEDED_SO_FILES = ['libjingle_peerconnection_so.so']
 TARGETS = [
-    'sdk/android:libwebrtc',
     'sdk/android:libjingle_peerconnection_so',
 ]
 

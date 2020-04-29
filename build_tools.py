@@ -52,14 +52,14 @@ def add_depot_tools_to_path(source_dir=''):
 
 
 def _RunGN(args):
-    cmd = [sys.executable, os.path.join(add_depot_tools_to_path().DEPOT_TOOLS_PATH, 'gn.py')]
+    cmd = [sys.executable, os.path.join(add_depot_tools_to_path(), 'gn.py')]
     cmd.extend(args)
     logging.debug('Running: %r', cmd)
     subprocess.check_call(cmd)
 
 
 def _RunNinja(output_directory, args):
-    cmd = [os.path.join(add_depot_tools_to_path().DEPOT_TOOLS_PATH, 'ninja'),
+    cmd = [os.path.join(add_depot_tools_to_path(), 'ninja'),
            '-C', output_directory]
     cmd.extend(args)
     logging.debug('Running: %r', cmd)

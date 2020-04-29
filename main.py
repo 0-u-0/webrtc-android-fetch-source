@@ -87,7 +87,7 @@ def _CollectLibraries(build_dir):
                 shutil.copy(so_file_path, arch_dir)
 
 
-def _ZipFiles(output_file='libwebrtc'):
+def _ZipFiles(output_file='libwebrtc.zip'):
     with zipfile.ZipFile(output_file, 'w') as zip_file:
         zip_file.write(JAVA_COPY_PATH)
         zip_file.write(LIBS_COPY_PATH)

@@ -6,7 +6,9 @@ import sys
 import shutil
 
 SDK_PATH = '/sdk/android'
-JAVA_SOURCE_PATH = '/java'
+JAVA_COPY_PATH = '/java'
+JAVA_COLLECT_PATH = ['/api', '/src/java']
+OUT_PATH = '/out'
 
 
 def _RemoveFiles(folder):
@@ -29,43 +31,56 @@ def _CopyFiles(src, dst):
 
 
 def _ParseArgs():
-    parser = argparse.ArgumentParser(description='fetch android java source and libraries.')
+    parser = argparse.ArgumentParser(description='Collect and build WebRTC Android java source and libraries.')
     parser.add_argument('--source-dir',
                         help='WebRTC source dir. Example: /realpath/to/src')
     parser.add_argument('--verbose', action='store_true', default=False,
                         help='Debug logging.')
+    parser.add_argument('--is-debug', action='store_true', default=True,
+                        help='Debug or not.')
+
     return parser.parse_args()
 
 
 def _FetchJavaSource(source_dir):
-    if not source_dir:
-        logging.error("no source dir")
-        return
     sdk_dir = source_dir + SDK_PATH
 
     if not os.path.isdir(sdk_dir):
-        logging.error("unknown dir : " + sdk_dir)
+        logging.error("unknown sdk dir : " + sdk_dir)
         return
 
     # create java source dir if not exists
-    java_dir = os.path.abspath(os.getcwd()) + JAVA_SOURCE_PATH
+    java_dir = os.path.abspath(os.getcwd()) + JAVA_COPY_PATH
     if not os.path.isdir(java_dir):
         os.mkdir(java_dir)
 
     # remove legacy file
     _RemoveFiles(java_dir)
 
-    _CopyFiles(sdk_dir + '/api', java_dir)
+    # collect java source
+    for location in JAVA_COLLECT_PATH:
+        _CopyFiles(sdk_dir + location, java_dir)
 
-    _CopyFiles(sdk_dir + '/src/java', java_dir)
 
-    # fetch java sour
+def _CollectLibraries(source_dir):
+    pass
+
+
+def _BuildLibraries(source_dir, is_debug):
+    pass
 
 
 def main():
     args = _ParseArgs()
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO)
+
+    if not args.source_dir:
+        logging.error("no source dir")
+        return -1
+
     _FetchJavaSource(args.source_dir)
+
+    _BuildLibraries(args.source_dir, args.is_debug)
 
 
 if __name__ == '__main__':

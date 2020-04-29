@@ -14,6 +14,7 @@ JAVA_COPY_PATH = os.path.join(SCRIPT_DIR, 'java')
 LIBS_COPY_PATH = os.path.join(SCRIPT_DIR, 'jniLibs')
 
 JAVA_COLLECT_PATH = [SDK_PATH + '/api', SDK_PATH + '/src/java', '/rtc_base/java/src']
+IGNORE_FILES = ['LegacyAudioDeviceModule.java']
 OUT_PATH = '/out'
 ARCHS = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
 NEEDED_SO_FILES = ['libjingle_peerconnection_so.so']
@@ -35,7 +36,8 @@ def _CopyFiles(src, dst):
     src_files = os.listdir(src)
     for file_name in src_files:
         if file_name != '.DS_Store':
-            shutil.copytree(os.path.join(src, file_name), os.path.join(dst, file_name), dirs_exist_ok=True)
+            shutil.copytree(os.path.join(src, file_name), os.path.join(dst, file_name), dirs_exist_ok=True,
+                            ignore=shutil.ignore_patterns(*IGNORE_FILES))
 
 
 def _ParseArgs():
@@ -50,7 +52,7 @@ def _ParseArgs():
     return parser.parse_args()
 
 
-def _FetchJavaSource(source_dir):
+def _CollectJavaSource(source_dir):
     # create java source dir if not exists
     if not os.path.isdir(JAVA_COPY_PATH):
         os.mkdir(JAVA_COPY_PATH)
@@ -88,7 +90,8 @@ def zip_dir(path, zip_file):
 
 
 def _ZipFiles(output_file='libwebrtc.zip'):
-    os.remove(output_file)
+    if os.path.exists(output_file):
+        os.remove(output_file)
     with zipfile.ZipFile(output_file, 'w') as zip_file:
         zip_dir(os.path.basename(JAVA_COPY_PATH), zip_file)
         zip_dir(os.path.basename(LIBS_COPY_PATH), zip_file)
@@ -107,7 +110,7 @@ def main():
         logging.error("no source dir")
         return -1
 
-    _FetchJavaSource(args.source_dir)
+    _CollectJavaSource(args.source_dir)
 
     build_dir = args.source_dir + OUT_PATH
 

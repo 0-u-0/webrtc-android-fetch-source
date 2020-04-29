@@ -4,12 +4,14 @@ import argparse
 import logging
 import sys
 import shutil
+import zipfile
 
 from build_tools import Build
 
 SDK_PATH = '/sdk/android'
-JAVA_COPY_PATH = '/java'
-LIBS_COPY_PATH = '/jniLibs'
+SCRIPT_DIR = os.path.abspath(os.getcwd())
+JAVA_COPY_PATH = os.path.join(SCRIPT_DIR, 'java')
+LIBS_COPY_PATH = os.path.join(SCRIPT_DIR, 'jniLibs')
 
 JAVA_COLLECT_PATH = ['/api', '/src/java']
 OUT_PATH = '/out'
@@ -56,36 +58,39 @@ def _FetchJavaSource(source_dir):
         return
 
     # create java source dir if not exists
-    java_dir = os.path.abspath(os.getcwd()) + JAVA_COPY_PATH
-    if not os.path.isdir(java_dir):
-        os.mkdir(java_dir)
+    if not os.path.isdir(JAVA_COPY_PATH):
+        os.mkdir(JAVA_COPY_PATH)
 
     # remove legacy file
-    _RemoveFiles(java_dir)
+    _RemoveFiles(JAVA_COPY_PATH)
 
     # collect java source
     for location in JAVA_COLLECT_PATH:
-        _CopyFiles(sdk_dir + location, java_dir)
+        _CopyFiles(sdk_dir + location, JAVA_COPY_PATH)
 
 
 def _CollectLibraries(build_dir):
-    lib_dir = os.path.abspath(os.getcwd()) + LIBS_COPY_PATH
-    if not os.path.isdir(lib_dir):
-        os.mkdir(lib_dir)
+    if not os.path.isdir(LIBS_COPY_PATH):
+        os.mkdir(LIBS_COPY_PATH)
 
-    _RemoveFiles(lib_dir)
+    _RemoveFiles(LIBS_COPY_PATH)
 
     for arch in ARCHS:
-        logging.info('Collecting: %s', arch)
         output_directory = os.path.join(build_dir, arch)
-
         if os.path.isdir(output_directory):
-            arch_dir = os.path.join(lib_dir, arch)
+            logging.info('Collecting: %s', arch)
+            arch_dir = os.path.join(LIBS_COPY_PATH, arch)
             os.mkdir(arch_dir)
 
             for so_file in NEEDED_SO_FILES:
                 so_file_path = os.path.join(output_directory, so_file)
                 shutil.copy(so_file_path, arch_dir)
+
+
+def _ZipFiles(output_file='libwebrtc'):
+    with zipfile.ZipFile(output_file, 'w') as zip_file:
+        zip_file.write(JAVA_COPY_PATH)
+        zip_file.write(LIBS_COPY_PATH)
 
 
 def _BuildLibraries(build_dir, is_debug):
@@ -109,6 +114,7 @@ def main():
 
     _CollectLibraries(build_dir)
 
+    _ZipFiles()
 
 if __name__ == '__main__':
     sys.exit(main())

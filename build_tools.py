@@ -52,6 +52,8 @@ def add_depot_tools_to_path(source_dir=''):
 
 
 def _RunGN(args):
+    logging.info('Gn args : %s', args)
+
     cmd = [sys.executable, os.path.join(add_depot_tools_to_path(), 'gn.py')]
     cmd.extend(args)
     logging.debug('Running: %r', cmd)
@@ -59,6 +61,8 @@ def _RunGN(args):
 
 
 def _RunNinja(output_directory, args):
+    logging.info('Ninja args : %s', args)
+
     cmd = [os.path.join(add_depot_tools_to_path(), 'ninja'),
            '-C', output_directory]
     cmd.extend(args)

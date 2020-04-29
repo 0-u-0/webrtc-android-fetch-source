@@ -78,11 +78,6 @@ def _EncodeForGN(value):
         return repr(value)
 
 
-def _GetOutputDirectory(build_dir, arch):
-    """Returns the GN output directory for the target architecture."""
-    return os.path.join(build_dir, arch)
-
-
 def _GetTargetCpu(arch):
     """Returns target_cpu for the GN build with the given architecture."""
     if arch in ['armeabi', 'armeabi-v7a']:
@@ -112,7 +107,7 @@ def _GetArmVersion(arch):
 def Build(build_dir, arch, is_debug, rtc_use_h264):
     """Generates target architecture using GN and builds it using ninja."""
     logging.info('Building: %s', arch)
-    output_directory = _GetOutputDirectory(build_dir, arch)
+    output_directory = os.path.join(build_dir, arch)
     gn_args = {
         'target_os': 'android',
         'is_debug': is_debug,

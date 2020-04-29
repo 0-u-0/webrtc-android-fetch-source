@@ -9,9 +9,12 @@ from build_tools import Build
 
 SDK_PATH = '/sdk/android'
 JAVA_COPY_PATH = '/java'
+LIBS_COPY_PATH = '/jniLibs'
+
 JAVA_COLLECT_PATH = ['/api', '/src/java']
 OUT_PATH = '/out'
 ARCHS = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
+NEEDED_SO_FILES = ['libjingle_peerconnection_so.so']
 
 
 def _RemoveFiles(folder):
@@ -30,7 +33,7 @@ def _CopyFiles(src, dst):
     src_files = os.listdir(src)
     for file_name in src_files:
         if file_name != '.DS_Store':
-            shutil.copytree(src + '/' + file_name, dst + '/' + file_name, dirs_exist_ok=True)
+            shutil.copytree(os.path.join(src, file_name), os.path.join(dst, file_name), dirs_exist_ok=True)
 
 
 def _ParseArgs():
@@ -65,13 +68,29 @@ def _FetchJavaSource(source_dir):
         _CopyFiles(sdk_dir + location, java_dir)
 
 
-def _CollectLibraries(source_dir):
-    pass
+def _CollectLibraries(build_dir):
+    lib_dir = os.path.abspath(os.getcwd()) + LIBS_COPY_PATH
+    if not os.path.isdir(lib_dir):
+        os.mkdir(lib_dir)
+
+    _RemoveFiles(lib_dir)
+
+    for arch in ARCHS:
+        logging.info('Collecting: %s', arch)
+        output_directory = os.path.join(build_dir, arch)
+
+        if os.path.isdir(output_directory):
+            arch_dir = os.path.join(lib_dir, arch)
+            os.mkdir(arch_dir)
+
+            for so_file in NEEDED_SO_FILES:
+                so_file_path = os.path.join(output_directory, so_file)
+                shutil.copy(so_file_path, arch_dir)
 
 
-def _BuildLibraries(source_dir, is_debug):
-    build_dir = source_dir + OUT_PATH
+def _BuildLibraries(build_dir, is_debug):
     # Build(build_dir, 'x86', is_debug, False)
+    return
 
 
 def main():
@@ -84,7 +103,11 @@ def main():
 
     _FetchJavaSource(args.source_dir)
 
-    _BuildLibraries(args.source_dir, args.is_debug)
+    build_dir = args.source_dir + OUT_PATH
+
+    _BuildLibraries(build_dir, args.is_debug)
+
+    _CollectLibraries(build_dir)
 
 
 if __name__ == '__main__':

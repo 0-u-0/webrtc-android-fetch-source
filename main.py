@@ -13,7 +13,7 @@ SCRIPT_DIR = os.path.abspath(os.getcwd())
 JAVA_COPY_PATH = os.path.join(SCRIPT_DIR, 'java')
 LIBS_COPY_PATH = os.path.join(SCRIPT_DIR, 'jniLibs')
 
-JAVA_COLLECT_PATH = ['/api', '/src/java']
+JAVA_COLLECT_PATH = [SDK_PATH + '/api', SDK_PATH + '/src/java', '/rtc_base/java/src']
 OUT_PATH = '/out'
 ARCHS = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
 NEEDED_SO_FILES = ['libjingle_peerconnection_so.so']
@@ -51,12 +51,6 @@ def _ParseArgs():
 
 
 def _FetchJavaSource(source_dir):
-    sdk_dir = source_dir + SDK_PATH
-
-    if not os.path.isdir(sdk_dir):
-        logging.error("unknown sdk dir : " + sdk_dir)
-        return
-
     # create java source dir if not exists
     if not os.path.isdir(JAVA_COPY_PATH):
         os.mkdir(JAVA_COPY_PATH)
@@ -66,7 +60,7 @@ def _FetchJavaSource(source_dir):
 
     # collect java source
     for location in JAVA_COLLECT_PATH:
-        _CopyFiles(sdk_dir + location, JAVA_COPY_PATH)
+        _CopyFiles(source_dir + location, JAVA_COPY_PATH)
 
 
 def _CollectLibraries(build_dir):

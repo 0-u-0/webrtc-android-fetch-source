@@ -13,8 +13,9 @@ SCRIPT_DIR = os.path.abspath(os.getcwd())
 JAVA_COPY_PATH = os.path.join(SCRIPT_DIR, 'java')
 LIBS_COPY_PATH = os.path.join(SCRIPT_DIR, 'jniLibs')
 
-JAVA_COLLECT_PATH = [SDK_PATH + '/api', SDK_PATH + '/src/java', '/rtc_base/java/src']
-IGNORE_FILES = ['LegacyAudioDeviceModule.java']
+JAVA_COLLECT_PATH = [SDK_PATH + '/api', SDK_PATH + '/src/java',
+                     '/rtc_base/java/src', '/modules/audio_device/android/java/src']
+IGNORE_FILES = []
 OUT_PATH = '/out'
 ARCHS = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
 NEEDED_SO_FILES = ['libjingle_peerconnection_so.so']

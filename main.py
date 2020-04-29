@@ -87,10 +87,16 @@ def _CollectLibraries(build_dir):
                 shutil.copy(so_file_path, arch_dir)
 
 
+def zip_dir(path, zip_file):
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            zip_file.write(os.path.join(root, file))
+
+
 def _ZipFiles(output_file='libwebrtc.zip'):
     with zipfile.ZipFile(output_file, 'w') as zip_file:
-        zip_file.write(JAVA_COPY_PATH)
-        zip_file.write(LIBS_COPY_PATH)
+        zip_dir(JAVA_COPY_PATH, zip_file)
+        zip_dir(LIBS_COPY_PATH, zip_file)
 
 
 def _BuildLibraries(build_dir, is_debug):
@@ -115,6 +121,7 @@ def main():
     _CollectLibraries(build_dir)
 
     _ZipFiles()
+
 
 if __name__ == '__main__':
     sys.exit(main())

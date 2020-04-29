@@ -96,8 +96,8 @@ def zip_dir(path, zip_file):
 def _ZipFiles(output_file='libwebrtc.zip'):
     os.remove(output_file)
     with zipfile.ZipFile(output_file, 'w') as zip_file:
-        zip_dir(JAVA_COPY_PATH, zip_file)
-        zip_dir(LIBS_COPY_PATH, zip_file)
+        zip_dir(os.path.basename(JAVA_COPY_PATH), zip_file)
+        zip_dir(os.path.basename(LIBS_COPY_PATH), zip_file)
 
 
 def _BuildLibraries(build_dir, is_debug):
